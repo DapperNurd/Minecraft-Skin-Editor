@@ -15,14 +15,15 @@ public class Drawing : MonoBehaviour
 
     [SerializeField] GameObject model;
 
-    int resolution = 64; // This should not be changed
+    static public int resolution = 64; // This should not be changed
 
-    Color drawingColor;
+    ColorPicker colorPicker;
 
     // Start is called before the first frame update
     void Start()
     {
         drawingCam = FindObjectOfType<CameraController>().drawingCam;
+        colorPicker = FindAnyObjectByType<ColorPicker>();
 
         drawingTexture = new Texture2D(resolution, resolution);
         drawingTexture.filterMode = FilterMode.Point;
@@ -37,8 +38,6 @@ public class Drawing : MonoBehaviour
             drawingTexture.SetPixels(baseTexture.GetPixels());
             drawingTexture.Apply();
         }
-
-        drawingColor = Color.green;
     }
 
     // Update is called once per frame
@@ -47,7 +46,7 @@ public class Drawing : MonoBehaviour
         Ray ray = drawingCam.ScreenPointToRay(Input.mousePosition);
         if (Input.GetMouseButton(0) && Physics.Raycast(ray, out RaycastHit hit, 100)) {
             Vector2Int pos = Vector2Int.RoundToInt(new Vector2(hit.point.x / 10, hit.point.y / 10) * resolution);
-            UpdateTexture(pos.x, pos.y, drawingColor);
+            UpdateTexture(pos.x, pos.y, colorPicker.color);
         }
     }
 
